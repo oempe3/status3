@@ -304,7 +304,7 @@
       const total = equipamentosData.length;
       const operacao = equipamentosData.filter(e => e.STATUS === "OPE").length;
       const standby = equipamentosData.filter(e => e.STATUS === "ST-BY").length;
-      const manutencao = equipamentosData.filter(e => e.STATUS === "MANU").length;
+      const manutencao = equipamentosData.filter(e => e.STATUS === "MNT").length;
       
       document.getElementById("total-equipamentos").textContent = total;
       document.getElementById("total-operacao").textContent = operacao;
