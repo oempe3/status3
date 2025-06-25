@@ -1,0 +1,52 @@
+name: Deploy to GitHub Pages
+
+# 1. Aciona em push na branch main e permite execução manual
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write      # Permissão para publicar no Pages
+  id-token: write   # Necessário para autenticação OIDC :contentReference[oaicite:1]{index=1}
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true  # Cancela builds pendentes para manter só o mais recente
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Exemplo: build de site estático com Hugo (ajuste conforme o seu stack)
+      - name: Install Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: 'latest'
+      - name: Build site
+        run: hugo --minify
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        id: upload
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public/   # pasta onde o Hugo gera o site :contentReference[oaicite:2]{index=2}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
